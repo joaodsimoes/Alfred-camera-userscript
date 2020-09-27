@@ -9,6 +9,9 @@
 // @require http://code.jquery.com/jquery-latest.js
 // ==/UserScript==
 
+
+var name = window.prompt("Enter camera name: ");
+
 function getSnapshot(videoplayer){
 
   return videoplayer.toDataURL('image/jpeg', 0.8).split("base64,")[1];
@@ -20,12 +23,15 @@ function sendSnapshot(){
     alert(videoplayer);
     var xmlhttp = new XMLHttpRequest();
     var theUrl = "http://127.0.0.1:5000/update";
+    var cameraID = (window.location.href).split("/")[6]
 
-   setInterval(function(){//sends new POST request with base64 encoded videoframe every 400ms
+    setInterval(function(){
        var base64_string = getSnapshot(videoplayer);
        xmlhttp.open("POST", theUrl);
        xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-       xmlhttp.send(JSON.stringify({ "base64_string": base64_string }));
+       xmlhttp.send(JSON.stringify({ "_id": cameraID,
+                                     "name": name,
+                                     "base64_string": base64_string }));
    }, 400)
 }
 
